@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+
+<meta charset="utf-8">
+<!-- <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css"> -->
+<link rel="stylesheet" href="//rawgit.com/tpreusse/radar-chart-d3/master/src/radar-chart.css">
+<h1> Average Scores for Universities by Continent </h1>
+<p> This Radar Chart aims to show average score of each category used to rank Universities aggregated by continents. </p>
+<style>
+html, body {
+  height:100%;
+}
+body {
+  padding: 50px;
+  vertical-align: middle;
+  margin-left: 200px;
+  font-family: 'Open Sans', sans-serif;
+
+}
+p {
+  color: grey;
+}
+</style>
+
+<style>
+.radar-chart .area {
+  fill-opacity: 0.6;
+}
+.radar-chart.focus .area {
+  fill-opacity: 0.3;
+}
+.radar-chart.focus .area.focused {
+  fill-opacity: 0.9;
+}
+.radar-chart {
+  font-size: 20px;
+}
+
+
+.area.Africa, .Africa .circle {
+  fill: #E0FFAD;
+  stroke: none;
+}
+
+.area.Asia, .Asia .circle {
+  fill: #FFDFFF;
+  stroke: none;
+}
+
+.area.Europe, .Europe .circle {
+  fill: #FAAFBA;
+  stroke: none;
+}
+
+.area.Oceania, .Oceania .circle {
+  fill: #F9FAAF;
+  stroke: none;
+}
+
+.area.SouthAmerica, .SouthAmerica .circle {
+  fill: #BCC6CC;
+  stroke: none;
+}
+
+.area.NorthAmerica, .NorthAmerica .circle {
+  fill: #ADDFFF;
+  stroke: none;
+}
+
+
+</style>
+
+<script src="//d3js.org/d3.v3.js"></script>
+<script src="//rawgit.com/alangrafu/radar-chart-d3/master/src/radar-chart.min.js"></script>
+
+<script>
+RadarChart.defaultConfig.color = function() {};
+RadarChart.defaultConfig.w = 800;
+RadarChart.defaultConfig.h = 800;
+</script>
+
+<span></span>
+
+<script>
+var data = [
+    {
+    className: 'SouthAmerica',
+    axes: [
+      {axis: "Teaching", value: 29.9},
+      {axis: "International", value: 30}, 
+      {axis: "Research", value: 22.2},  
+      {axis: "Income", value: 39.8},
+      {axis: "Citations", value: 27.8},
+      //{axis: "Total Score", value: 57.9},
+    ]
+  },
+      {
+    className: 'NorthAmerica', // optional can be used for styling
+    axes: [
+      {axis: "Teaching", value: 46.6}, 
+      {axis: "International", value: 43.7}, 
+      {axis: "Research", value: 44.7},  
+      {axis: "Income", value: 47.7},
+      {axis: "Citations", value: 72.6},
+      //{axis: "Total Score", value: 60.4},
+    ]
+  },
+       {
+    className: 'Oceania',
+    axes: [
+      {axis: "Teaching", value: 30},
+      {axis: "International", value: 79.9}, 
+      {axis: "Research", value: 34},  
+      {axis: "Income", value: 50.6},
+      {axis: "Citations", value: 55.1},
+      //{axis: "Total Score", value: 62.5},
+    ]
+  },
+   {
+    className: 'Europe',
+    axes: [
+      {axis: "Teaching", value: 34},
+      {axis: "International", value: 62.2}, 
+      {axis: "Research", value: 32.5},  
+      {axis: "Income", value: 45.7},
+      {axis: "Citations", value: 63.1},
+      //{axis: "Total Score", value: 58.9},
+    ]
+  },
+        {
+    className: 'Africa',
+    axes: [
+      {axis: "Teaching", value: 24.3},
+      {axis: "International", value: 53.1}, 
+      {axis: "Research", value: 24.1},  
+      {axis: "Income", value: 66.1},
+      {axis: "Citations", value: 49.1},
+      //{axis: "Total Score", value: 61.6},
+    ]
+  },
+          {
+    className: 'Asia',
+    axes: [
+      {axis: "Teaching", value: 36.5},
+      {axis: "International", value: 34.6}, 
+      {axis: "Research", value: 32.4},  
+      {axis: "Income", value: 57.3},
+      {axis: "Citations", value: 42.9},
+      //{axis: "Total Score", value: 57.7},
+    ]
+  }
+
+];
+function Dataset() {
+  return data.map(function(d) {
+    return {
+      className: d.className,
+      axes: d.axes.map(function(axis) {
+        return {axis: axis.axis, value: axis.value};
+      })
+    };
+  });
+}
+</script>
+
+<script>
+var chart = RadarChart.chart();
+var cfg = chart.config(); // retrieve default config
+var svg = d3.select('body').append('svg')
+  .attr('width', cfg.w + cfg.w + 50)
+  .attr('height', cfg.h + cfg.h / 4);
+var cfgg = chart.config({
+  factor: 0.95,
+  factorLegend: 1,
+  levels: 6,
+  labelScale: 1.0,
+  showLevels: true,
+  showLevelsLabels: true,
+  showAxesLabels: true,
+  showAxes: true,
+  maxValue: 80,
+  minValue: 0,
+  radians: 2 * Math.PI,
+  axisLine: true,
+  axisText: true,
+  circles: true,
+  radius: 5,
+  open: false, 
+
+  axisJoin: function(d, i) {
+    return d.className || i;
+  },
+  tooltipFormatValue: function(d) {
+    return d;
+  },
+  tooltipFormatClass: function(d) {
+    return d;
+  },
+  transitionDuration: 300
+});
+
+var g = svg.append('g')
+  .attr("transform", "translate(" + (cfg.w/2 + cfg.w + 50) + "," + (cfg.h/2 + cfg.h / 4) + ")");
+
+var colorscale = ['#ADDFFF','#FAAFBA','#F9FAAF','#E0FFAD','#FFDFFF','#BCC6CC']
+var LegendOptions = ['North America','Europe','Oceania','Africa','Asia','South America'];
+
+ // builds out the levels labels
+ var vis_radius = Math.min(cfg.w / 2, cfg.h / 2);
+  function buildLevelsLabels() {
+      for (var level = 0; level < cfgg.levels; level++) {
+        var levelFactor = vis_radius * ((level + 1) / cfgg.levels);
+
+        // build level-labels
+        vis.levels
+          .data([1]).enter()
+          .append("svg:text").classed("level-labels", true)
+          .text((cfgg.maxValue * (level + 1) / cfgg.levels).toFixed(2))
+          .attr("x", function(d) { return levelFactor * (1 - Math.sin(0)); })
+          .attr("y", function(d) { return levelFactor * (1 - Math.cos(0)); })
+          .attr("transform", "translate(" + (cfg.w / 2 - levelFactor + 5) + ", " + (cfg.h / 2 - levelFactor) + ")")
+          .attr("fill", "gray")
+          .attr("font-family", "sans-serif")
+          .attr("font-size", 10 * cfgg.labelScale + "px");
+      }
+    }
+
+//Create the title for the legend
+var text = svg.append("text")
+  .attr("class", "title")
+  .attr('transform', 'translate(90,0)') 
+  .attr("x", cfg.w - 70)
+  .attr("y", 10)
+  .attr("font-size", "12px")
+  .attr("fill", "#404040")
+  .text("Color of each continent:");
+    
+//Initiate Legend 
+var legend = svg.append("g")
+  .attr("class", "legend")
+  .attr("height", 100)
+  .attr("width", 200)
+  .attr('transform', 'translate(90,20)') 
+  ;
+  //Create colour squares
+  legend.selectAll('rect')
+    .data(LegendOptions)
+    .enter()
+    .append("rect")
+    .attr("x", cfg.w - 65)
+    .attr("y", function(d, i){ return i * 20;})
+    .attr("width", 10)
+    .attr("height", 10)
+    .style("fill", function(d, i){ return colorscale[i];})
+    ;
+  //Create text next to squares
+  legend.selectAll('text')
+    .data(LegendOptions)
+    .enter()
+    .append("text")
+    .attr("x", cfg.w - 52)
+    .attr("y", function(d, i){ return i * 20 + 9;})
+    .attr("font-size", "11px")
+    .attr("fill", "#737373")
+    .text(function(d) { return d; })
+    ;
+
+svg.classed('single', 1).datum(Dataset()).call(chart);
+
+</script>
